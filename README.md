@@ -1,6 +1,6 @@
 # lunr-schema
 
-** WORK IN PROGRESS **
+**WORK IN PROGRESS**
 
 JSONSchema definition of the format required for a Lunr index.
 
