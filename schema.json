@@ -1,0 +1,96 @@
+{
+  "$schema": "http://json-schema.org/draft-06/schema#",
+  "title": "Lunr Index",
+  "description": "Describes the schema for a serialised Lunr index",
+
+  "definitions": {
+    "vector": {
+      "title": "lunr.Vector",
+      "description": "lunr.Vectors are serialised as a single array, alternating between the term index and its score",
+      "type": "array",
+      "items": {
+        "description": "vector indicies will be at even indexes and must be unsigned integers, scores will be at odd indexes and will probably be floats",
+        "type": "number"
+      }
+    },
+
+    "posting": {
+      "title": "lunr.Posting",
+      "description": "A posting is a hash map of document references to any recorded metadata",
+      "type": "object"
+    },
+
+    "indexEntry": {
+      "title": "lunr.IndexEntry",
+      "description": "There is an index entry for each term stored in the inverted index, it contains the terms index, used in vectors, as well as a posting for each document/field containing the term",
+      "type": "object",
+      "properties": {
+        "_index": {
+          "type": "integer",
+          "description": "this is the index of this term within the field vectors",
+          "minimum": 0
+        }
+      },
+      "required": ["_index"],
+      "additionalProperties": {
+        "$ref": "#/definitions/posting"
+      }
+    }
+  },
+
+  "required": ["version", "fields", "fieldVectors", "invertedIndex", "pipeline"],
+  "additionalProperties": false,
+  "type": "object",
+
+  "properties": {
+    "version": {
+      "title": "lunr.Version",
+      "description": "The version of Lunr that generated the index",
+      "type": "string"
+    },
+
+    "fields": {
+      "title": "lunr.Fields",
+      "description": "The names of the document fields in this index",
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+
+    "pipeline": {
+      "title": "lunr.Pipeline",
+      "description": "The names of the pipeline functions that should appear in the search pipeline",
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+
+    "fieldVectors": {
+      "title": "lunr.FieldVectors",
+      "description": "There will be a vector for each document/field combination, the key will a combination of field and document ref",
+      "type": "array",
+      "items": {
+        "type": "array",
+        "items": [
+          { "type": "string" },
+          { "$ref": "#/definitions/vector" }
+        ]
+      }
+    },
+
+    "invertedIndex": {
+      "title": "lunr.InvertedIndex",
+      "description": "The inverted index contains tuples of term to index entry, the list must be sorted by term",
+      "type": "array",
+      "items": {
+        "type": "array",
+        "items": [
+          { "type": "string" },
+          { "$ref": "#/definitions/indexEntry" }
+        ]
+      }
+    }
+  }
+}
